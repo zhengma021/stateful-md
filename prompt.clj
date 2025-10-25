@@ -8,14 +8,6 @@
   ;;
   )
 
-(defn run-s-md-visible-task [{:keys [file sharing-name checking-url port]}]
-  (when-not (check-s-md-visible-checking-url-argument checking-url)
-    ;;throw error to tell the user the checking-url is invalid and the details of the error
-    false)
-
-  ;; ;;This task will make the markdown content visible on the given port
-  )
-
 (defn access-the-not-found-page []
   ;; ;;This function will return a not found page
   ;; ;;The not found page should tell the user the requested markdown content is not found
@@ -58,6 +50,14 @@
 (defn set-md-content-on-the-route [sharing-name]
   ;; ;;Should set up the route to access the markdown content via the sharing-name
   ;; ;;The route should be: localhost:<port>/stateful-md/<sharing-name>
+  )
+
+(defn run-s-md-visible-task [{:keys [file sharing-name checking-url port]}]
+  (when-not (check-s-md-visible-checking-url-argument checking-url)
+    ;;throw error to tell the user the checking-url is invalid and the details of the error
+    false)
+
+  ;; ;;This task will make the markdown content visible on the given port
   )
 
 (defn setup-stateful-md-task [task-name task-args]
