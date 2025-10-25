@@ -22,7 +22,12 @@ function parseArgs() {
       options.checkUrl = args[i + 1];
       i++;
     } else if (args[i] === '--port' && i + 1 < args.length) {
-      options.port = parseInt(args[i + 1], 10);
+      const portValue = parseInt(args[i + 1], 10);
+      if (isNaN(portValue) || portValue < 1 || portValue > 65535) {
+        console.error(`Error: Invalid port number: ${args[i + 1]}`);
+        process.exit(1);
+      }
+      options.port = portValue;
       i++;
     }
   }
@@ -87,7 +92,7 @@ function generateHTML(markdownContent, checkUrl) {
         ${htmlContent}
     </div>
     <script>
-        const checkUrl = '${checkUrl}';
+        const checkUrl = ${JSON.stringify(checkUrl)};
         const statusElement = document.getElementById('status');
         const contentElement = document.getElementById('content');
         
