@@ -87,7 +87,7 @@ export class CLI {
     // Validate sharing name
     if (!this.isValidSharingName(sharingName)) {
       throw new Error(
-        "Sharing name must contain only letters, numbers, hyphens, and underscores",
+        "Sharing name must contain only letters (including Chinese), numbers, hyphens, and underscores",
       );
     }
 
@@ -108,9 +108,12 @@ export class CLI {
   }
 
   private isValidSharingName(name: string): boolean {
-    // Allow letters, numbers, hyphens, and underscores
-    const regex = /^[a-zA-Z0-9_-]+$/;
-    return regex.test(name) && name.length > 0 && name.length <= 50;
+    // Allow letters (including Chinese), numbers, hyphens, and underscores
+    // Chinese characters: \u4e00-\u9fff (CJK Unified Ideographs)
+    // Also allow other common Unicode ranges for international support
+    const regex =
+      /^[\w\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\u30a0-\u30ff-]+$/;
+    return regex.test(name) && name.length > 0 && name.length <= 100;
   }
 
   private isValidUrl(url: string): boolean {

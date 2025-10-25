@@ -17,8 +17,8 @@ npm run build
 ### 2. Basic Usage
 
 ```bash
-npm start s-md-visible \
-  --file ./example.md \
+npm start -- s-md-visible \
+  --file ./scripts/example.md \
   --sharing-name my-document \
   --checking-url http://localhost:3001/api/check-visibility \
   --port 3000
@@ -30,18 +30,18 @@ For a complete demonstration:
 
 ```bash
 # Run the interactive demo
-./demo.sh
+./scripts/demo.sh
 ```
 
 Or manually:
 
 ```bash
 # Terminal 1: Start visibility server
-node test-visibility-server.js
+node scripts/test-visibility-server.js
 
 # Terminal 2: Start stateful markdown server
-npm start s-md-visible \
-  --file ./example.md \
+npm start -- s-md-visible \
+  --file ./scripts/example.md \
   --sharing-name demo-doc \
   --checking-url http://localhost:3001/api/check-visibility \
   --port 3000
@@ -175,10 +175,10 @@ Run multiple instances on different ports:
 
 ```bash
 # Document 1
-npm start s-md-visible --file ./doc1.md --sharing-name doc1 --checking-url http://api.example.com/check/doc1 --port 3000
+npm start -- s-md-visible --file ./scripts/example.md --sharing-name doc1 --checking-url http://api.example.com/check/doc1 --port 3000
 
 # Document 2  
-npm start s-md-visible --file ./doc2.md --sharing-name doc2 --checking-url http://api.example.com/check/doc2 --port 3001
+npm start -- s-md-visible --file ./scripts/test-chinese/example-chinese.md --sharing-name doc2 --checking-url http://api.example.com/check/doc2 --port 3001
 ```
 
 ### Production Deployment
@@ -253,14 +253,14 @@ curl -H "Accept: application/json" http://your-api.com/check-visibility
 
 ```bash
 # 1. Create your markdown file
-echo "# My Secret Document\n\nThis is protected content." > secret.md
+echo "# My Secret Document\n\nThis is protected content." > scripts/secret.md
 
 # 2. Start visibility server (in another terminal)
-node test-visibility-server.js
+node scripts/test-visibility-server.js
 
 # 3. Start stateful markdown
-npm start s-md-visible \
-  --file ./secret.md \
+npm start -- s-md-visible \
+  --file ./scripts/secret.md \
   --sharing-name secret-project \
   --checking-url http://localhost:3001/api/check-visibility \
   --port 3000

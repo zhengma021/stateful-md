@@ -1,4 +1,4 @@
-import { MarkdownContent } from '../types';
+import { MarkdownContent } from "../types";
 export declare class MarkdownProcessor {
     private md;
     constructor();

@@ -15,27 +15,29 @@ class MarkdownRoutes {
         this.setupRoutes();
     }
     setupRoutes() {
-        this.router.get('/stateful-md/:sharingName', this.handleMarkdownAccess.bind(this));
-        this.router.get('/health', this.handleHealthCheck.bind(this));
-        this.router.get('/', this.handleHome.bind(this));
+        this.router.get("/stateful-md/:sharingName", this.handleMarkdownAccess.bind(this));
+        this.router.get("/health", this.handleHealthCheck.bind(this));
+        this.router.get("/", this.handleHome.bind(this));
     }
     async handleMarkdownAccess(req, res) {
         try {
             const { sharingName } = req.params;
-            if (sharingName !== this.config.sharingName) {
+            const decodedSharingName = decodeURIComponent(sharingName);
+            const configSharingName = this.config.sharingName;
+            if (decodedSharingName !== configSharingName) {
                 this.accessTheNotFoundPage(res);
                 return;
             }
-            const isVisible = await this.whenUserAccessTheMdVisiblePage(sharingName);
+            const isVisible = await this.whenUserAccessTheMdVisiblePage(decodedSharingName);
             if (isVisible) {
-                await this.accessTheStatefulSharingMd(sharingName, res);
+                await this.accessTheStatefulSharingMd(decodedSharingName, res);
             }
             else {
                 this.accessTheNotFoundPage(res);
             }
         }
         catch (error) {
-            console.error('Error handling markdown access:', error);
+            console.error("Error handling markdown access:", error);
             this.accessTheNotFoundPage(res);
         }
     }
@@ -45,7 +47,7 @@ class MarkdownRoutes {
             return visible;
         }
         catch (error) {
-            console.error('Error checking visibility:', error);
+            console.error("Error checking visibility:", error);
             return false;
         }
     }
@@ -53,18 +55,19 @@ class MarkdownRoutes {
         try {
             const markdownContent = await this.markdownProcessor.loadMarkdownFile(this.config.markdownFile);
             const htmlContent = this.markdownProcessor.createProtectedMarkdownPage(markdownContent, sharingName, this.config.checkingUrl);
-            res.setHeader('Content-Type', 'text/html; charset=utf-8');
-            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-            res.setHeader('Pragma', 'no-cache');
-            res.setHeader('Expires', '0');
-            res.setHeader('X-Frame-Options', 'DENY');
-            res.setHeader('X-Content-Type-Options', 'nosniff');
-            res.setHeader('X-XSS-Protection', '1; mode=block');
-            res.setHeader('Referrer-Policy', 'no-referrer');
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Expires", "0");
+            res.setHeader("X-Frame-Options", "DENY");
+            res.setHeader("X-Content-Type-Options", "nosniff");
+            res.setHeader("X-XSS-Protection", "1; mode=block");
+            res.setHeader("Referrer-Policy", "no-referrer");
+            res.setHeader("Accept-Charset", "utf-8");
             res.status(200).send(htmlContent);
         }
         catch (error) {
-            console.error('Error serving markdown content:', error);
+            console.error("Error serving markdown content:", error);
             this.accessTheNotFoundPage(res);
         }
     }
@@ -74,11 +77,12 @@ class MarkdownRoutes {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Content Not Found - Stateful Markdown</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif;
+            line-height: 1.8;
             color: #333;
             max-width: 600px;
             margin: 0 auto;
@@ -140,11 +144,12 @@ class MarkdownRoutes {
         <div class="error-icon">📄</div>
         <h1>Content Not Found</h1>
         <p>The requested markdown content is not currently available or visible.</p>
-        <p>This could happen if:</p>
+        <p>请求的 Markdown 内容当前不可用或不可见。</p>
+        <p>This could happen if / 可能的原因：</p>
         <ul style="text-align: left; margin: 20px 0;">
-            <li>The sharing name is incorrect or expired</li>
-            <li>The content has been disabled by the owner</li>
-            <li>There's a temporary access restriction</li>
+            <li>The sharing name is incorrect or expired / 分享名称错误或已过期</li>
+            <li>Content has been disabled by the owner / 内容已被所有者禁用</li>
+            <li>There's a temporary access restriction / 存在临时访问限制</li>
         </ul>
         <a href="/" class="home-link">← Back to Home</a>
 
@@ -155,7 +160,7 @@ class MarkdownRoutes {
     </div>
 </body>
 </html>`;
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.status(404).send(notFoundHtml);
     }
     handleHome(req, res) {
@@ -164,11 +169,12 @@ class MarkdownRoutes {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Stateful Markdown Server</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif;
+            line-height: 1.8;
             color: #333;
             max-width: 800px;
             margin: 0 auto;
@@ -281,43 +287,45 @@ class MarkdownRoutes {
                 </div>
                 <div class="status-card">
                     <h3>📄 Source File</h3>
-                    <p>${this.config.markdownFile.split('/').pop()}</p>
+                    <p>${this.config.markdownFile.split("/").pop()}</p>
                 </div>
             </div>
         </div>
 
         <div class="info-section">
-            <h2>About</h2>
+            <h2>About / 关于</h2>
             <p>This server hosts markdown content with dynamic visibility control. The content is only accessible when the external visibility check returns a positive status.</p>
-            <p><strong>Features:</strong></p>
+            <p>本服务器托管具有动态可见性控制的 Markdown 内容。只有在外部可见性检查返回正面状态时，内容才可访问。</p>
+            <p><strong>Features / 功能特性：</strong></p>
             <ul>
-                <li>Real-time visibility checking</li>
-                <li>Copy protection mechanisms</li>
-                <li>Secure content delivery</li>
-                <li>JavaScript-based access control</li>
+                <li>Real-time visibility checking / 实时可见性检查</li>
+                <li>Copy protection mechanisms / 复制保护机制</li>
+                <li>Secure content delivery / 安全内容传输</li>
+                <li>JavaScript-based access control / 基于 JavaScript 的访问控制</li>
+                <li>Chinese content support / 中文内容支持</li>
             </ul>
         </div>
 
         <div style="text-align: center;">
-            <a href="/stateful-md/${this.config.sharingName}" class="access-link">
-                Access Shared Content →
+            <a href="/stateful-md/${encodeURIComponent(this.config.sharingName)}" class="access-link">
+                Access Shared Content / 访问共享内容 →
             </a>
         </div>
     </div>
 </body>
 </html>`;
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.status(200).send(homeHtml);
     }
     handleHealthCheck(req, res) {
         res.json({
-            status: 'healthy',
+            status: "healthy",
             timestamp: new Date().toISOString(),
             config: {
                 sharingName: this.config.sharingName,
                 checkingUrl: this.config.checkingUrl,
-                port: this.config.port
-            }
+                port: this.config.port,
+            },
         });
     }
     getRouter() {

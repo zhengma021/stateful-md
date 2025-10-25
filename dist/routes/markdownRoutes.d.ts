@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { ServerConfig } from '../types';
+import { Router } from "express";
+import { ServerConfig } from "../types";
 export declare class MarkdownRoutes {
     private router;
     private config;

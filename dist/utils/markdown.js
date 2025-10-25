@@ -49,7 +49,7 @@ class MarkdownProcessor {
             html: true,
             linkify: true,
             typographer: true,
-            breaks: true
+            breaks: true,
         });
     }
     async loadMarkdownFile(filePath) {
@@ -57,11 +57,14 @@ class MarkdownProcessor {
             if (!fs.existsSync(filePath)) {
                 throw new Error(`Markdown file not found: ${filePath}`);
             }
-            const content = fs.readFileSync(filePath, 'utf8');
+            const content = fs.readFileSync(filePath, { encoding: "utf8" });
+            if (content.includes("\uFFFD")) {
+                throw new Error("File contains invalid UTF-8 characters. Please ensure the file is saved in UTF-8 encoding.");
+            }
             return content;
         }
         catch (error) {
-            throw new Error(`Failed to load markdown file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(`Failed to load markdown file: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
     }
     renderMarkdown(content) {
@@ -74,20 +77,22 @@ class MarkdownProcessor {
             return {
                 content,
                 sharingName,
-                isValid
+                isValid,
             };
         }
         catch (error) {
             return {
-                content: '',
+                content: "",
                 sharingName,
-                isValid: false
+                isValid: false,
             };
         }
     }
     isValidSharingName(sharingName) {
-        const regex = /^[a-zA-Z0-9_-]+$/;
-        return regex.test(sharingName) && sharingName.length > 0 && sharingName.length <= 50;
+        const regex = /^[\w\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\u30a0-\u30ff-]+$/;
+        return (regex.test(sharingName) &&
+            sharingName.length > 0 &&
+            sharingName.length <= 100);
     }
     createProtectedMarkdownPage(content, sharingName, checkingUrl) {
         const renderedContent = this.renderMarkdown(content);
@@ -99,8 +104,8 @@ class MarkdownProcessor {
     <title>Stateful Markdown - ${sharingName}</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif;
+            line-height: 1.8;
             color: #333;
             max-width: 800px;
             margin: 0 auto;
@@ -166,7 +171,7 @@ class MarkdownProcessor {
             background: #f4f4f4;
             padding: 2px 4px;
             border-radius: 3px;
-            font-family: 'Monaco', 'Menlo', monospace;
+            font-family: 'Monaco', 'Menlo', 'Consolas', '微软雅黑', monospace;
         }
 
         .content blockquote {
@@ -236,6 +241,24 @@ class MarkdownProcessor {
         .js-disabled-message {
             display: none;
         }
+
+        /* Better Chinese text rendering */
+        .content {
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Improve Chinese punctuation handling */
+        .content p, .content li {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Better spacing for mixed Chinese/English content */
+        .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+            word-spacing: 0.05em;
+        }
     </style>
 </head>
 <body class="no-js">
@@ -271,17 +294,29 @@ class MarkdownProcessor {
         const contentElement = document.getElementById('markdown-content');
 
         // The actual markdown content (base64 encoded to make it harder to extract)
-        const markdownContent = \`${Buffer.from(renderedContent).toString('base64')}\`;
+        // Using Buffer with utf8 encoding to properly handle Chinese characters
+        const markdownContent = \`${Buffer.from(renderedContent, "utf8").toString("base64")}\`;
 
         // Decode and display content
         function displayContent() {
             try {
-                const decodedContent = atob(markdownContent);
+                // Decode base64 content and handle UTF-8 properly for Chinese characters
+                const decodedContent = decodeURIComponent(Array.prototype.map.call(atob(markdownContent), function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
                 contentElement.innerHTML = decodedContent;
                 updateStatus('visible');
             } catch (error) {
                 console.error('Error displaying content:', error);
-                showNotFound();
+                // Fallback to simple base64 decode if UTF-8 decode fails
+                try {
+                    const fallbackContent = atob(markdownContent);
+                    contentElement.innerHTML = fallbackContent;
+                    updateStatus('visible');
+                } catch (fallbackError) {
+                    console.error('Fallback decode also failed:', fallbackError);
+                    showNotFound();
+                }
             }
         }
 

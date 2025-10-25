@@ -16,7 +16,7 @@ npm run build
 
 Open Terminal 1 and run:
 ```bash
-node test-visibility-server.js
+node scripts/test-visibility-server.js
 ```
 
 You should see:
@@ -32,7 +32,7 @@ You should see:
 Open Terminal 2 and run:
 ```bash
 npm start -- s-md-visible \
-  --file ./example.md \
+  --file ./scripts/example.md \
   --sharing-name demo-doc \
   --checking-url http://localhost:3001/api/check-visibility \
   --port 3000
@@ -84,7 +84,7 @@ Response: `{"visible":true,"message":"Visibility enabled","timestamp":"..."}`
 
 Simply run:
 ```bash
-./demo.sh
+./scripts/demo.sh
 ```
 
 This will:

@@ -97,7 +97,7 @@ class CLI {
             throw new Error(`File must be a markdown file (.md or .markdown): ${file}`);
         }
         if (!this.isValidSharingName(sharingName)) {
-            throw new Error("Sharing name must contain only letters, numbers, hyphens, and underscores");
+            throw new Error("Sharing name must contain only letters (including Chinese), numbers, hyphens, and underscores");
         }
         if (!this.isValidUrl(checkingUrl)) {
             throw new Error(`Invalid checking URL: ${checkingUrl}`);
@@ -111,8 +111,8 @@ class CLI {
         };
     }
     isValidSharingName(name) {
-        const regex = /^[a-zA-Z0-9_-]+$/;
-        return regex.test(name) && name.length > 0 && name.length <= 50;
+        const regex = /^[\w\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\u30a0-\u30ff-]+$/;
+        return regex.test(name) && name.length > 0 && name.length <= 100;
     }
     isValidUrl(url) {
         try {

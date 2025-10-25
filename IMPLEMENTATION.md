@@ -104,13 +104,21 @@ stateful-md/
 │   └── utils/
 │       ├── visibility.ts     # Visibility checking logic
 │       └── markdown.ts       # Markdown processing
+├── scripts/                  # Demo and test scripts
+│   ├── demo.sh               # Interactive demo script
+│   ├── test.sh               # Simple test script
+│   ├── test-visibility-server.js # Test API server
+│   ├── example.md            # English sample markdown file
+│   └── test-chinese/         # Chinese content tests
+│       ├── example-chinese.md      # Chinese sample markdown
+│       ├── test-chinese.sh         # Full Chinese test
+│       └── test-chinese-simple.sh  # Simple Chinese test
 ├── dist/                     # Compiled JavaScript (generated)
-├── example.md                # Sample markdown file
-├── test-visibility-server.js # Test API server
-├── demo.sh                   # Interactive demo script
+├── run-demo.sh               # Convenient demo launcher
 ├── package.json              # Project configuration
 ├── tsconfig.json             # TypeScript configuration
 ├── README.md                 # Main documentation
+├── README-zh.md              # Chinese documentation
 ├── USAGE.md                  # Usage guide
 └── IMPLEMENTATION.md         # This file
 ```
@@ -161,27 +169,43 @@ Example response:
 ## Testing & Demo
 
 ### Provided Testing Tools
-1. **Test Visibility Server** (`test-visibility-server.js`)
+1. **Test Visibility Server** (`scripts/test-visibility-server.js`)
    - Simple Express.js API for testing
    - Toggle and set visibility endpoints
    - Status monitoring
 
-2. **Interactive Demo** (`demo.sh`)
+2. **Interactive Demo** (`scripts/demo.sh`)
    - Automated setup of both servers
    - Browser opening
    - Comprehensive usage instructions
 
-3. **Example Content** (`example.md`)
-   - Sample markdown document
-   - Demonstrates various markdown features
+3. **Example Content** 
+   - `scripts/example.md` - English sample markdown document
+   - `scripts/test-chinese/example-chinese.md` - Chinese sample document
+   - Demonstrates various markdown features and UTF-8 support
+
+4. **Chinese Content Tests** (`scripts/test-chinese/`)
+   - Full Chinese character support testing
+   - UTF-8 encoding validation
+   - Mixed language content verification
+
+5. **Demo Launcher** (`run-demo.sh`)
+   - Convenient wrapper to run demos from root directory
+   - Interactive menu for different test options
 
 ### Usage Examples
 ```bash
 # Basic usage
-npm start s-md-visible --file ./example.md --sharing-name demo --checking-url http://localhost:3001/api/check-visibility --port 3000
+npm start -- s-md-visible --file ./scripts/example.md --sharing-name demo --checking-url http://localhost:3001/api/check-visibility --port 3000
 
-# Run demo
-./demo.sh
+# Run demo (from root directory)
+./run-demo.sh
+
+# Run demo directly
+cd scripts && ./demo.sh
+
+# Test Chinese content
+cd scripts/test-chinese && ./test-chinese-simple.sh
 
 # Test visibility control
 curl -X POST http://localhost:3001/api/toggle-visibility

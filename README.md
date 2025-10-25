@@ -2,9 +2,13 @@
 
 A TypeScript application for sharing markdown content with dynamic visibility control and copy protection.
 
+**English** | [中文](./README-zh.md)
+
 ## Overview
 
 Stateful Markdown allows you to serve markdown documents with real-time visibility control. The content is only accessible when an external API confirms visibility, and includes built-in copy protection mechanisms.
+
+✨ **Full Chinese Support**: This application fully supports Chinese content, UTF-8 encoding, and Chinese sharing names.
 
 ## Features
 
@@ -14,6 +18,8 @@ Stateful Markdown allows you to serve markdown documents with real-time visibili
 - **Secure Delivery**: Content only served when authorized
 - **JavaScript Required**: Content hidden when JavaScript is disabled
 - **Graceful Error Handling**: User-friendly error pages and messages
+- **Chinese Content Support**: Full UTF-8 support for Chinese characters and mixed content
+- **International Ready**: Supports Unicode sharing names and multilingual content
 
 ## Installation
 
@@ -47,10 +53,22 @@ npm start s-md-visible \
   --port 3000
 ```
 
+### Chinese Content Example
+
+For Chinese content, use the Chinese example file:
+
+```bash
+npm start s-md-visible \
+  --file ./scripts/test-chinese/example-chinese.md \
+  --sharing-name 中文文档 \
+  --checking-url http://localhost:3001/api/check-visibility \
+  --port 3000
+```
+
 ### Command Line Arguments
 
 - `--file <path>`: Path to the markdown file to serve
-- `--sharing-name <name>`: Unique name for sharing the content
+- `--sharing-name <name>`: Unique name for sharing the content (supports Chinese characters)
 - `--checking-url <url>`: URL that returns visibility status (must return JSON with `visible` boolean field)
 - `--port <number>`: Port to run the server on
 
@@ -102,6 +120,7 @@ Once running, the server provides these endpoints:
 - **Visibility Validation**: Continuous checking of external API
 - **Copy Prevention**: Multiple layers of copy protection
 - **Security Headers**: Appropriate HTTP security headers set
+- **UTF-8 Security**: Proper handling of Unicode characters and Chinese content
 
 ## Example Visibility Server
 
@@ -135,6 +154,9 @@ app.listen(3001, () => {
 - `npm start` - Build and run the application
 - `npm run dev` - Run with ts-node for development
 - `npm run clean` - Remove build artifacts
+- `npm run test-server` - Run test visibility server
+- `./scripts/demo.sh` - Run interactive demo
+- `./scripts/test-chinese/test-chinese-simple.sh` - Test Chinese content functionality
 
 ### Project Structure
 
@@ -162,7 +184,9 @@ src/
 
 - Markdown files must have `.md` or `.markdown` extension
 - Files must be readable by the application
-- Sharing names must contain only letters, numbers, hyphens, and underscores
+- Files must be saved in UTF-8 encoding for Chinese content
+- Sharing names support letters (including Chinese), numbers, hyphens, and underscores
+- Chinese sharing names are automatically URL-encoded
 
 ## Troubleshooting
 
@@ -172,6 +196,8 @@ src/
 2. **File not found**: Ensure the markdown file path is correct and readable
 3. **Invalid checking URL**: Verify the URL is accessible and returns proper JSON
 4. **Visibility API errors**: Check that your visibility API is running and reachable
+5. **Chinese characters not displaying**: Ensure files are saved in UTF-8 encoding
+6. **Chinese sharing names**: Use proper URL encoding or let the application handle it automatically
 
 ### Error Messages
 
@@ -180,6 +206,77 @@ The application provides detailed error messages for:
 - Inaccessible checking URLs
 - Malformed API responses
 - Network connectivity issues
+- UTF-8 encoding issues
+- Chinese character handling problems
+
+## Quick Start
+
+### Run Demo
+
+```bash
+# Full demo (English content)
+./scripts/demo.sh
+
+# Chinese content test
+./scripts/test-chinese/test-chinese-simple.sh
+
+# Manual setup
+# Terminal 1: Start visibility server
+node scripts/test-visibility-server.js
+
+# Terminal 2: Start markdown server
+npm start -- s-md-visible \
+  --file ./scripts/test-chinese/example-chinese.md \
+  --sharing-name 演示文档 \
+  --checking-url http://localhost:3001/api/check-visibility \
+  --port 3000
+```
+
+### Test Visibility Control
+
+```bash
+# Check current visibility
+curl http://localhost:3001/api/check-visibility
+
+# Toggle visibility (watch content disappear/appear in browser)
+curl -X POST http://localhost:3001/api/toggle-visibility
+
+# Set invisible
+curl -X POST http://localhost:3001/api/set-visibility \
+  -H "Content-Type: application/json" \
+  -d '{"visible": false}'
+
+# Set visible
+curl -X POST http://localhost:3001/api/set-visibility \
+  -H "Content-Type: application/json" \
+  -d '{"visible": true}'
+```
+
+## Example Files
+
+- `scripts/example.md` - English example document
+- `scripts/test-chinese/example-chinese.md` - Chinese example document (中文示例文档)
+- `scripts/test-visibility-server.js` - Test visibility server
+- `scripts/demo.sh` - Complete demo script
+- `scripts/test-chinese/test-chinese-simple.sh` - Chinese content test script
+
+## Chinese Content Features
+
+### Character Support
+- Full UTF-8 encoding support
+- Proper handling of Chinese characters, punctuation, and symbols
+- Support for both Simplified and Traditional Chinese
+- Mixed Chinese-English content rendering
+
+### Font Optimization
+- Optimized font stack for Chinese content
+- Better line height and character spacing
+- Improved mixed-language content display
+
+### Sharing Names
+- Support for Chinese characters in sharing names
+- Automatic URL encoding handling
+- Mixed Chinese-English naming support
 
 ## License
 
@@ -196,3 +293,7 @@ MIT License - see LICENSE file for details.
 ## Support
 
 For issues and questions, please create an issue in the repository.
+
+---
+
+📖 **Documentation**: [English](./README.md) | [中文文档](./README-zh.md)
