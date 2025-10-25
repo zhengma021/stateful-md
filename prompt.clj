@@ -18,11 +18,12 @@
   ;;
   )
 
-(defn run-s-md-visible-task [{:keys [file checking-url port]}]
-  (if (not (check-s-md-visible-checking-url-argument checking-url))
+(defn run-s-md-visible-task [{:keys [file sharing-name checking-url port]}]
+  (when-not (check-s-md-visible-checking-url-argument checking-url)
     ;;throw error to tell the user the checking-url is invalid and the details of the error
     false)
-  ;; ;;This task will make the markdown content visible on the given port, which mean when the user access the localhost:<port>, the markdown content will be rendered and visible
+
+;; ;;This task will make the markdown content visible on the given port, which mean when the user access the localhost:<port>, the markdown content will be rendered and visible
   ;; ;;It will check the visibility of the markdown content on the given url every 1 second
   ;; ;;If the content is not visible, it will reload the page
   ;; ;;If the accesser to the localhost:<port> disabled the javascript, the content will not be visible
@@ -37,11 +38,11 @@
   ;; ;; will check the visibility of the markdown content on the given url every 1 second
   ;; ;;If the content is not visible, will do a reload of the page
   ;; The "exists" only means the given sharing-name is valid as this is a LLM prompt in clojure style not code to run
-  (if "exists" == sharing-name)
+  (when-not (= "valid-sharing-name" sharing-name)
+    ;;return an error message included html content
+    false)
   ;;return the the markdown content
-  true
-  ;;return a simple error message included html content
-  )
+  true)
 
 (defn when-user-access-the-md-visible-page [sharing-name]
   ;; ;;This function will be called when the user access the md visible page
@@ -54,7 +55,7 @@
   ;; ;;The route should be: localhost:<port>/stateful-md/<sharing-name>
   )
 
-(defn setup-stateful-md-task [task-name, task-args]
+(defn setup-stateful-md-task [task-name task-args]
   ;; ;;This function will setup the stateful-md project environment
   ;; ;;It will install the necessary dependencies and setup the project structure
   (case task-name
