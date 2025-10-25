@@ -1,0 +1,22 @@
+{
+  "name": "stateful-md",
+  "version": "1.0.0",
+  "description": "A tool to set state to markdown content",
+  "main": "index.js",
+  "bin": {
+    "s-md-visible": "./bin/s-md-visible.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "markdown",
+    "stateful",
+    "server"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "marked": "^9.0.0"
+  }
+}
