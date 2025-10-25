@@ -141,8 +141,8 @@ print_success "Visibility server started (PID: $VISIBILITY_PID)"
 
 # Start the stateful markdown server in background
 print_info "Starting stateful markdown server on port 3000..."
-npm start s-md-visible \
-    --file ./example.md \
+npm start -- s-md-visible \
+    --file /Users/zhengma/Desktop/code/clients/tiktop-shop/README.md \
     --sharing-name demo-document \
     --checking-url http://localhost:3001/api/check-visibility \
     --port 3000 &

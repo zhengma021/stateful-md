@@ -9,8 +9,8 @@
     "dev": "ts-node src/index.ts",
     "clean": "rm -rf dist",
     "test-server": "node test-visibility-server.js",
-    "demo": "npm run build && concurrently \"npm run test-server\" \"sleep 3 && npm start s-md-visible --file ./example.md --sharing-name demo-doc --checking-url http://localhost:3001/api/check-visibility --port 3000\"",
-    "help": "npm start s-md-visible --help"
+    "demo": "npm run build && concurrently \"npm run test-server\" \"sleep 3 && npm start -- s-md-visible --file ./example.md --sharing-name demo-doc --checking-url http://localhost:3001/api/check-visibility --port 3000\"",
+    "help": "npm start -- s-md-visible --help"
   },
   "keywords": [
     "markdown",
