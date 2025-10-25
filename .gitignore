@@ -1,2 +1,5 @@
 .lsp/
 .clj-kondo/
+dist
+node_modules
+out
