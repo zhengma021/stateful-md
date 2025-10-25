@@ -4,8 +4,6 @@
   ;; ;; All arguments should be given via command line arguments
   ;; ;;The given checking-url should be a valid url and be accessible
   ;; ;;It should return 2xx status code with json content type and contain the field "visible" with boolean value
-  ;; ;;If the sharing-name is not possible to use in the url, it should throw an error
-  ;;
   )
 
 (defn access-the-not-found-page []
