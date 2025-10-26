@@ -43,6 +43,19 @@ export class CLI {
         return port;
       })
       .option(
+        "--checking-url-timeout <seconds>",
+        "Timeout in seconds for checking URL requests (default: 2 seconds)",
+        (value) => {
+          const timeout = parseInt(value, 10);
+          if (isNaN(timeout) || timeout < 1 || timeout > 30) {
+            throw new Error(
+              "Checking URL timeout must be between 1 and 30 seconds",
+            );
+          }
+          return timeout;
+        },
+      )
+      .option(
         "--skip-url-validation",
         "Skip checking URL validation (for public tunnels)",
       )
@@ -95,6 +108,19 @@ export class CLI {
         },
         3001,
       )
+      .option(
+        "--checking-url-timeout <seconds>",
+        "Timeout in seconds for checking URL requests (default: 2 seconds)",
+        (value) => {
+          const timeout = parseInt(value, 10);
+          if (isNaN(timeout) || timeout < 1 || timeout > 30) {
+            throw new Error(
+              "Checking URL timeout must be between 1 and 30 seconds",
+            );
+          }
+          return timeout;
+        },
+      )
       .action(async (options) => {
         try {
           const serveoArgs = await this.validateAndParseServeoArgs(options);
@@ -139,6 +165,7 @@ export class CLI {
       sharingName: options.sharingName,
       taskPort: options.taskPort,
       checkingPort: options.checkingPort,
+      checkingUrlTimeoutSeconds: options.checkingUrlTimeout || 2,
     };
   }
 
@@ -168,6 +195,7 @@ export class CLI {
         args.file,
         args.sharingName,
         args.checkingPort.toString(),
+        (args.checkingUrlTimeoutSeconds || 2).toString(),
       ],
       {
         stdio: "inherit",
@@ -254,6 +282,7 @@ export class CLI {
       sharingName,
       checkingUrl,
       port,
+      checkingUrlTimeoutSeconds: options.checkingUrlTimeout || 2,
     };
   }
 

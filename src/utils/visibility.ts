@@ -3,11 +3,13 @@ import { VisibilityResponse } from "../types";
 
 export class VisibilityChecker {
   private checkingUrl: string;
+  private timeoutSeconds: number;
   private intervalId: NodeJS.Timeout | null = null;
   private callbacks: Array<(visible: boolean) => void> = [];
 
-  constructor(checkingUrl: string) {
+  constructor(checkingUrl: string, timeoutSeconds: number = 2) {
     this.checkingUrl = checkingUrl;
+    this.timeoutSeconds = timeoutSeconds;
   }
 
   /**
@@ -16,7 +18,7 @@ export class VisibilityChecker {
   public async sMdContentVisible(): Promise<boolean> {
     try {
       const response = await axios.get<VisibilityResponse>(this.checkingUrl, {
-        timeout: 2000,
+        timeout: this.timeoutSeconds * 1000,
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -164,8 +166,11 @@ export class VisibilityChecker {
 /**
  * Standalone function to check if content is visible (for compatibility with Clojure spec)
  */
-export async function sMdContentVisible(checkingUrl: string): Promise<boolean> {
-  const checker = new VisibilityChecker(checkingUrl);
+export async function sMdContentVisible(
+  checkingUrl: string,
+  timeoutSeconds: number = 2,
+): Promise<boolean> {
+  const checker = new VisibilityChecker(checkingUrl, timeoutSeconds);
   return checker.sMdContentVisible();
 }
 

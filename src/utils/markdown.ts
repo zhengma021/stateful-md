@@ -97,6 +97,7 @@ export class MarkdownProcessor {
     content: string,
     sharingName: string,
     checkingUrl: string,
+    checkingUrlTimeoutSeconds: number = 2,
   ): string {
     const renderedContent = this.renderMarkdown(content);
 
@@ -367,9 +368,9 @@ export class MarkdownProcessor {
                 // Create AbortController for 2-second timeout
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => {
-                    console.log('⏰ [' + requestId + '] Request timeout after 2 seconds');
+                    console.log('⏰ [' + requestId + '] Request timeout after ${checkingUrlTimeoutSeconds} seconds');
                     controller.abort();
-                }, 2000);
+                }, ${checkingUrlTimeoutSeconds * 1000});
 
                 // Add cache-busting parameter to prevent browser caching
                 const baseUrl = '${checkingUrl}';
@@ -420,7 +421,7 @@ export class MarkdownProcessor {
                 }
             } catch (error) {
                 if (error.name === 'AbortError') {
-                    console.error('⏰ [' + requestId + '] Visibility check timeout after 2 seconds');
+                    console.error('⏰ [' + requestId + '] Visibility check timeout after ${checkingUrlTimeoutSeconds} seconds');
                 } else {
                     console.error('💥 [' + requestId + '] Error checking visibility:', error);
                 }
@@ -529,11 +530,13 @@ export function createProtectedMarkdownPage(
   content: string,
   sharingName: string,
   checkingUrl: string,
+  checkingUrlTimeoutSeconds: number = 2,
 ): string {
   const processor = new MarkdownProcessor();
   return processor.createProtectedMarkdownPage(
     content,
     sharingName,
     checkingUrl,
+    checkingUrlTimeoutSeconds,
   );
 }

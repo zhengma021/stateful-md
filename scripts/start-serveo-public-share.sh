@@ -19,6 +19,7 @@ TASK_PORT="$1"
 MD_FILE_PATH="$2"
 SHARING_NAME="$3"
 CHECKING_PORT="$4"
+CHECKING_URL_TIMEOUT_SECONDS="${5:-2}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -136,9 +137,10 @@ validate_inputs() {
     log_step "Validating inputs..."
 
     # Check if all required parameters are provided
-    if [ $# -ne 4 ]; then
-        log_error "Usage: $0 <task-port> <md-file-path> <sharing-name> <checking-port>"
+    if [ $# -lt 4 ] || [ $# -gt 5 ]; then
+        log_error "Usage: $0 <task-port> <md-file-path> <sharing-name> <checking-port> [checking-url-timeout-seconds]"
         log_error "Example: $0 3000 ./my-doc.md my-public-doc 3001"
+        log_error "Example with timeout: $0 3000 ./my-doc.md my-public-doc 3001 10"
         exit 1
     fi
 
@@ -156,6 +158,12 @@ validate_inputs() {
     # Check if ports are different
     if [ "$TASK_PORT" = "$CHECKING_PORT" ]; then
         log_error "Task port and checking port must be different"
+        exit 1
+    fi
+
+    # Validate timeout parameter
+    if ! [[ "$CHECKING_URL_TIMEOUT_SECONDS" =~ ^[0-9]+$ ]] || [ "$CHECKING_URL_TIMEOUT_SECONDS" -lt 1 ] || [ "$CHECKING_URL_TIMEOUT_SECONDS" -gt 30 ]; then
+        log_error "Invalid checking URL timeout: $CHECKING_URL_TIMEOUT_SECONDS (must be 1-30 seconds)"
         exit 1
     fi
 
@@ -261,6 +269,7 @@ start_markdown_server_with_public_urls() {
         --sharing-name "$SHARING_NAME" \
         --checking-url "$public_checking_url" \
         --port "$TASK_PORT" \
+        --checking-url-timeout "$CHECKING_URL_TIMEOUT_SECONDS" \
         --skip-url-validation > /tmp/markdown-server-public.log 2>&1 &
 
     MARKDOWN_SERVER_PID=$!

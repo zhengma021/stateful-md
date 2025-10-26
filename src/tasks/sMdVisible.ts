@@ -18,10 +18,14 @@ export class SMdVisibleTask {
       markdownFile: taskArgs.file,
       sharingName: taskArgs.sharingName,
       checkingUrl: taskArgs.checkingUrl,
+      checkingUrlTimeoutSeconds: taskArgs.checkingUrlTimeoutSeconds || 2,
     };
 
     this.app = express();
-    this.visibilityChecker = new VisibilityChecker(taskArgs.checkingUrl);
+    this.visibilityChecker = new VisibilityChecker(
+      taskArgs.checkingUrl,
+      taskArgs.checkingUrlTimeoutSeconds || 2,
+    );
     this.markdownProcessor = new MarkdownProcessor();
 
     this.setupMiddleware();

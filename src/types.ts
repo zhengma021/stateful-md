@@ -3,6 +3,7 @@ export interface TaskArgs {
   sharingName: string;
   checkingUrl: string;
   port: number;
+  checkingUrlTimeoutSeconds?: number;
 }
 
 export interface VisibilityResponse {
@@ -20,6 +21,7 @@ export interface ServerConfig {
   markdownFile: string;
   sharingName: string;
   checkingUrl: string;
+  checkingUrlTimeoutSeconds?: number;
 }
 
 export type TaskName = "s-md-visible";
@@ -29,6 +31,7 @@ export interface ServeoShareArgs {
   sharingName: string;
   taskPort: number;
   checkingPort: number;
+  checkingUrlTimeoutSeconds?: number;
 }
 
 export interface ErrorResponse {

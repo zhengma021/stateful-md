@@ -13,7 +13,10 @@ export class MarkdownRoutes {
     this.router = Router();
     this.config = config;
     this.markdownProcessor = new MarkdownProcessor();
-    this.visibilityChecker = new VisibilityChecker(config.checkingUrl);
+    this.visibilityChecker = new VisibilityChecker(
+      config.checkingUrl,
+      config.checkingUrlTimeoutSeconds || 2,
+    );
     this.setupRoutes();
   }
 
@@ -100,6 +103,7 @@ export class MarkdownRoutes {
         markdownContent,
         sharingName,
         this.config.checkingUrl,
+        this.config.checkingUrlTimeoutSeconds || 2,
       );
 
       res.setHeader("Content-Type", "text/html; charset=utf-8");
