@@ -1,8 +1,8 @@
 # Stateful Markdown - Project Status
 
-## 📊 Current Status: ✅ v0.1 COMPLETE & ENHANCED
+## 📊 Current Status: ✅ v0.2 COMPLETE & PUBLIC SHARING READY
 
-The Stateful Markdown application has been successfully implemented and enhanced with v0.1 timeout improvements. It is fully functional with comprehensive Chinese language support and robust error handling.
+The Stateful Markdown application has been successfully implemented with v0.2 Serveo public sharing capabilities. It now supports both local sharing and public internet access via SSH tunnels, with comprehensive Chinese language support and robust error handling.
 
 ## 🎯 Implementation Summary
 
@@ -15,6 +15,7 @@ The Stateful Markdown application has been successfully implemented and enhanced
 - **Command Line Interface**: Complete CLI with argument validation ✅
 - **Error Handling**: Graceful error pages and user feedback ✅
 - **🆕 Timeout Enhancements (v0.1)**: 2-second timeouts, robust error handling ✅
+- **🌟 PUBLIC SHARING (v0.2)**: SSH tunnels, Serveo integration, internet access ✅
 
 ### 📁 Project Structure (Updated)
 
@@ -36,6 +37,9 @@ stateful-md/
 │   ├── test.sh                   # Simple test script
 │   ├── test-visibility-server.js # Test API server
 │   ├── example.md                # English sample content
+│   ├── serveo-tunnel-manager.sh  # 🆕 SSH tunnel management
+│   ├── start-serveo-public-share.sh # 🆕 Public sharing orchestrator
+│   ├── test-serveo-share.sh      # 🆕 Public sharing test suite
 │   └── test-chinese/             # Chinese content tests
 │       ├── example-chinese.md    # Chinese sample content
 │       ├── test-chinese.sh       # Full Chinese test
@@ -60,6 +64,17 @@ Then select from menu:
 3. Simple Test
 4. Manual Setup Instructions
 
+### Option 2: Public Internet Sharing (v0.2)
+```bash
+# Share content publicly via SSH tunnels
+npm start -- serveo-share \
+  --file ./scripts/example.md \
+  --sharing-name my-public-doc
+
+# Test public sharing features
+./scripts/test-serveo-share.sh
+```
+
 ### Option 2: Direct Script Execution
 ```bash
 # English content demo
@@ -70,6 +85,9 @@ cd scripts/test-chinese && ./test-chinese-simple.sh
 
 # Simple functionality test
 cd scripts && ./test.sh
+
+# Test public sharing (v0.2)
+cd scripts && ./test-serveo-share.sh
 ```
 
 ### Option 3: Manual Setup
@@ -86,6 +104,13 @@ npm start -- s-md-visible \
 
 # Terminal 3: Test visibility control
 curl -X POST http://localhost:3001/api/toggle-visibility
+
+# Public sharing via Serveo tunnels (v0.2)
+npm start -- serveo-share \
+  --file ./scripts/example.md \
+  --sharing-name my-public-doc \
+  --task-port 3000 \
+  --checking-port 3001
 ```
 
 ## 🌏 Chinese Language Support
@@ -129,6 +154,9 @@ npm run clean         # Clean build artifacts
 npm run test-server   # Run test visibility server
 npm run demo          # Run automated demo
 npm run help          # Show CLI help
+
+# Public sharing commands (v0.2)
+npm start -- serveo-share --help  # Show public sharing help
 ```
 
 ### Direct Script Usage
@@ -257,21 +285,30 @@ npm start -- s-md-visible \
 
 ---
 
-## ✅ PROJECT STATUS: v0.1 ENHANCED AND READY FOR USE
+## ✅ PROJECT STATUS: v0.2 COMPLETE WITH PUBLIC SHARING
 
 **Last Updated**: 2024-01-15  
-**Version**: 0.1.0  
-**Status**: Production Ready with Enhanced Robustness  
+**Version**: 0.2.0  
+**Status**: Production Ready with Public Internet Sharing  
 **Chinese Support**: Full Implementation  
-**Test Coverage**: Comprehensive  
-**New in v0.1**: 2-second timeouts, enhanced error handling, improved reliability  
+**Test Coverage**: Comprehensive (Automated + Manual)  
+**New in v0.2**: SSH tunnels, Serveo integration, public internet access  
 
-The Stateful Markdown application is fully implemented with comprehensive Chinese language support and v0.1 timeout enhancements. It is ready for production deployment with improved robustness for real-world network conditions.
+The Stateful Markdown application is fully implemented with comprehensive Chinese language support, v0.1 timeout enhancements, and v0.2 public sharing capabilities. It now supports both local sharing and public internet access via SSH tunnels.
 
-### 🆕 v0.1 Enhancements
+### 🆕 v0.2 Major Features
+- **Public Internet Sharing**: SSH tunnels via Serveo for global access
+- **Automatic URL Generation**: Random secure domains (e.g., abc123.serveo.net)
+- **CLI Integration**: New `serveo-share` command with full validation
+- **Process Orchestration**: Automated service coordination and monitoring
+- **Comprehensive Testing**: Automated validation plus interactive live testing
+- **Security Documentation**: Clear guidelines for public content sharing
+- **Zero Breaking Changes**: Full backward compatibility with v0.0-v0.1
+
+### 🔧 v0.1 Enhancements (Preserved)
 - **Server-side timeout**: Reduced from 5s to 2s for faster error detection
 - **Client-side timeout**: Added 2s timeout to prevent hanging requests  
 - **HTTP status validation**: Only 200 status treated as success (was 2xx)
 - **Better error handling**: Failed/timeout requests redirect to not-found page
 - **Enhanced logging**: Timeout errors explicitly detected and logged
-- **Full backward compatibility**: All existing functionality preserved
+- **Cache-busting fixes**: Prevents content visibility when server is down

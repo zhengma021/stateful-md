@@ -1,7 +1,8 @@
 import { Command } from "commander";
-import { TaskArgs, TaskName } from "./types";
+import { TaskArgs, TaskName, ServeoShareArgs } from "./types";
 import * as fs from "fs";
 import * as path from "path";
+import * as childProcess from "child_process";
 import axios from "axios";
 
 export class CLI {
@@ -41,11 +42,63 @@ export class CLI {
         }
         return port;
       })
+      .option(
+        "--skip-url-validation",
+        "Skip checking URL validation (for public tunnels)",
+      )
       .action(async (options) => {
         try {
           const taskArgs = await this.validateAndParseArgs(options);
           const { runSMdVisibleTask } = require("./tasks/sMdVisible");
           await runSMdVisibleTask(taskArgs);
+        } catch (error) {
+          console.error("Error running s-md-visible task:", error);
+          process.exit(1);
+        }
+      });
+
+    this.program
+      .command("serveo-share")
+      .description(
+        "Share markdown content publicly via SSH tunnels using Serveo",
+      )
+      .requiredOption("--file <path>", "Path to the markdown file")
+      .requiredOption(
+        "--sharing-name <name>",
+        "Name to share the markdown content publicly",
+      )
+      .option(
+        "--task-port <number>",
+        "Port for the markdown server",
+        (value) => {
+          const port = parseInt(value, 10);
+          if (isNaN(port) || port < 1024 || port > 65535) {
+            throw new Error(
+              "Task port must be a valid number between 1024 and 65535",
+            );
+          }
+          return port;
+        },
+        3000,
+      )
+      .option(
+        "--checking-port <number>",
+        "Port for the visibility checking server",
+        (value) => {
+          const port = parseInt(value, 10);
+          if (isNaN(port) || port < 1024 || port > 65535) {
+            throw new Error(
+              "Checking port must be a valid number between 1024 and 65535",
+            );
+          }
+          return port;
+        },
+        3001,
+      )
+      .action(async (options) => {
+        try {
+          const serveoArgs = await this.validateAndParseServeoArgs(options);
+          await this.runServeoShare(serveoArgs);
         } catch (error) {
           console.error(
             "Error:",
@@ -54,6 +107,101 @@ export class CLI {
           process.exit(1);
         }
       });
+  }
+
+  private async validateAndParseServeoArgs(
+    options: any,
+  ): Promise<ServeoShareArgs> {
+    // Validate file path
+    const filePath = path.resolve(options.file);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Markdown file not found: ${filePath}`);
+    }
+
+    // Validate sharing name
+    if (!/^[a-zA-Z0-9_-]+$/.test(options.sharingName)) {
+      throw new Error(
+        "Sharing name can only contain letters, numbers, hyphens, and underscores",
+      );
+    }
+
+    if (options.sharingName.length < 1 || options.sharingName.length > 50) {
+      throw new Error("Sharing name must be between 1 and 50 characters long");
+    }
+
+    // Check if ports are different
+    if (options.taskPort === options.checkingPort) {
+      throw new Error("Task port and checking port must be different");
+    }
+
+    return {
+      file: filePath,
+      sharingName: options.sharingName,
+      taskPort: options.taskPort,
+      checkingPort: options.checkingPort,
+    };
+  }
+
+  private async runServeoShare(args: ServeoShareArgs): Promise<void> {
+    console.log("🚀 Starting Serveo Public Share...");
+    console.log(`📄 File: ${args.file}`);
+    console.log(`🏷️  Sharing Name: ${args.sharingName}`);
+    console.log(`🚀 Task Port: ${args.taskPort}`);
+    console.log(`🔍 Checking Port: ${args.checkingPort}`);
+    console.log("");
+
+    // Get the script directory
+    const scriptDir = path.join(__dirname, "..", "scripts");
+    const scriptPath = path.join(scriptDir, "start-serveo-public-share.sh");
+
+    // Check if bash script exists
+    if (!fs.existsSync(scriptPath)) {
+      throw new Error(`Serveo script not found: ${scriptPath}`);
+    }
+
+    // Execute the bash script
+    const child = childProcess.spawn(
+      "bash",
+      [
+        scriptPath,
+        args.taskPort.toString(),
+        args.file,
+        args.sharingName,
+        args.checkingPort.toString(),
+      ],
+      {
+        stdio: "inherit",
+        cwd: path.join(__dirname, ".."),
+      },
+    );
+
+    // Handle script exit
+    child.on("exit", (code) => {
+      if (code === 0) {
+        console.log("✅ Serveo public sharing completed successfully");
+      } else {
+        console.error(
+          `❌ Serveo public sharing failed with exit code: ${code}`,
+        );
+        process.exit(code || 1);
+      }
+    });
+
+    // Handle errors
+    child.on("error", (error) => {
+      console.error("❌ Failed to start Serveo public sharing:", error.message);
+      process.exit(1);
+    });
+
+    // Handle process termination
+    process.on("SIGINT", () => {
+      console.log("\n🛑 Terminating Serveo public sharing...");
+      child.kill("SIGTERM");
+    });
+
+    process.on("SIGTERM", () => {
+      child.kill("SIGTERM");
+    });
   }
 
   private async validateAndParseArgs(options: any): Promise<TaskArgs> {
@@ -96,8 +244,10 @@ export class CLI {
       throw new Error(`Invalid checking URL: ${checkingUrl}`);
     }
 
-    // Test if checking URL is accessible
-    await this.validateCheckingUrl(checkingUrl);
+    // Test if checking URL is accessible (unless validation is skipped)
+    if (!options.skipUrlValidation) {
+      await this.validateCheckingUrl(checkingUrl);
+    }
 
     return {
       file: path.resolve(file),

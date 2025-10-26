@@ -22,7 +22,14 @@ export interface ServerConfig {
   checkingUrl: string;
 }
 
-export type TaskName = 's-md-visible';
+export type TaskName = "s-md-visible";
+
+export interface ServeoShareArgs {
+  file: string;
+  sharingName: string;
+  taskPort: number;
+  checkingPort: number;
+}
 
 export interface ErrorResponse {
   error: string;

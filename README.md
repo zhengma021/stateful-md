@@ -10,8 +10,11 @@ Stateful Markdown allows you to serve markdown documents with real-time visibili
 
 ✨ **Full Chinese Support**: This application fully supports Chinese content, UTF-8 encoding, and Chinese sharing names.
 
+🌐 **NEW in v0.2**: Public internet sharing via SSH tunnels using Serveo!
+
 ## Features
 
+### Core Features
 - **Dynamic Visibility Control**: Content visibility controlled by external API
 - **Real-time Monitoring**: Checks visibility status every second
 - **Copy Protection**: Multiple layers to prevent easy content extraction
@@ -20,6 +23,13 @@ Stateful Markdown allows you to serve markdown documents with real-time visibili
 - **Graceful Error Handling**: User-friendly error pages and messages
 - **Chinese Content Support**: Full UTF-8 support for Chinese characters and mixed content
 - **International Ready**: Supports Unicode sharing names and multilingual content
+
+### 🆕 v0.2 Public Sharing Features
+- **Internet Access**: Share content publicly via SSH tunnels
+- **Automatic URLs**: Get public URLs like `https://abc123.serveo.net/stateful-md/your-doc`
+- **Zero Configuration**: No firewall or port forwarding needed
+- **Secure Tunnels**: SSH encryption for all public traffic
+- **Global Reach**: Access your content from anywhere on the internet
 
 ## Installation
 
@@ -41,9 +51,9 @@ npm run build
 
 ## Usage
 
-### Basic Usage
+### Option 1: Local Sharing (Original)
 
-Run the application with the `s-md-visible` task:
+Run the application with the `s-md-visible` task for local network sharing:
 
 ```bash
 npm start s-md-visible \
@@ -52,6 +62,32 @@ npm start s-md-visible \
   --checking-url http://localhost:3001/api/check-visibility \
   --port 3000
 ```
+
+### 🌐 Option 2: Public Internet Sharing (v0.2 NEW!)
+
+Share your content publicly on the internet via SSH tunnels:
+
+```bash
+npm start serveo-share \
+  --file ./my-document.md \
+  --sharing-name my-public-doc \
+  --task-port 3000 \
+  --checking-port 3001
+```
+
+**What happens:**
+1. 🖥️ Starts local visibility and markdown servers
+2. 🌐 Creates SSH tunnels via Serveo to expose them publicly
+3. 📄 Displays public URLs like: `https://abc123.serveo.net/stateful-md/my-public-doc`
+4. 🔍 Provides visibility control API: `https://def456.serveo.net/api/check-visibility`
+5. ⚠️ **Your content becomes publicly accessible on the internet!**
+
+**Public sharing features:**
+- **Zero Configuration**: No firewall or port forwarding needed
+- **Automatic URLs**: Get random secure domains from Serveo
+- **Full Visibility Control**: Same real-time control as local sharing
+- **SSH Security**: All traffic encrypted through SSH tunnels
+- **Global Access**: Share with anyone, anywhere in the world
 
 ### Chinese Content Example
 

@@ -4,7 +4,16 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+// Parse command line arguments for port
+const args = process.argv.slice(2);
+const portArg =
+  args.find((arg) => arg.startsWith("--port=")) ||
+  args[args.findIndex((arg) => arg === "--port") + 1];
+const PORT = portArg
+  ? portArg.startsWith("--port=")
+    ? portArg.split("=")[1]
+    : portArg
+  : process.env.PORT || 3001;
 
 // Enable CORS for all routes
 app.use(cors());
