@@ -77,6 +77,7 @@ export class MarkdownRoutes {
       return visible;
     } catch (error) {
       console.error("Error checking visibility:", error);
+      // If request fails or times out, treat as content not visible
       return false;
     }
   }
@@ -118,6 +119,7 @@ export class MarkdownRoutes {
       res.status(200).send(htmlContent);
     } catch (error) {
       console.error("Error serving markdown content:", error);
+      // If any error occurs (file loading, content creation, etc.), redirect to not-found
       this.accessTheNotFoundPage(res);
     }
   }

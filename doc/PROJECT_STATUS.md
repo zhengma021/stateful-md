@@ -1,8 +1,8 @@
 # Stateful Markdown - Project Status
 
-## 📊 Current Status: ✅ COMPLETE & READY
+## 📊 Current Status: ✅ v0.1 COMPLETE & ENHANCED
 
-The Stateful Markdown application has been successfully implemented and is fully functional with comprehensive Chinese language support.
+The Stateful Markdown application has been successfully implemented and enhanced with v0.1 timeout improvements. It is fully functional with comprehensive Chinese language support and robust error handling.
 
 ## 🎯 Implementation Summary
 
@@ -14,6 +14,7 @@ The Stateful Markdown application has been successfully implemented and is fully
 - **Chinese Support**: Full UTF-8, Chinese characters, mixed content ✅
 - **Command Line Interface**: Complete CLI with argument validation ✅
 - **Error Handling**: Graceful error pages and user feedback ✅
+- **🆕 Timeout Enhancements (v0.1)**: 2-second timeouts, robust error handling ✅
 
 ### 📁 Project Structure (Updated)
 
@@ -256,12 +257,21 @@ npm start -- s-md-visible \
 
 ---
 
-## ✅ PROJECT STATUS: COMPLETE AND READY FOR USE
+## ✅ PROJECT STATUS: v0.1 ENHANCED AND READY FOR USE
 
 **Last Updated**: 2024-01-15  
-**Version**: 1.0.0  
-**Status**: Production Ready  
+**Version**: 0.1.0  
+**Status**: Production Ready with Enhanced Robustness  
 **Chinese Support**: Full Implementation  
 **Test Coverage**: Comprehensive  
+**New in v0.1**: 2-second timeouts, enhanced error handling, improved reliability  
 
-The Stateful Markdown application is fully implemented with comprehensive Chinese language support and is ready for production deployment.
+The Stateful Markdown application is fully implemented with comprehensive Chinese language support and v0.1 timeout enhancements. It is ready for production deployment with improved robustness for real-world network conditions.
+
+### 🆕 v0.1 Enhancements
+- **Server-side timeout**: Reduced from 5s to 2s for faster error detection
+- **Client-side timeout**: Added 2s timeout to prevent hanging requests  
+- **HTTP status validation**: Only 200 status treated as success (was 2xx)
+- **Better error handling**: Failed/timeout requests redirect to not-found page
+- **Enhanced logging**: Timeout errors explicitly detected and logged
+- **Full backward compatibility**: All existing functionality preserved

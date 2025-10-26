@@ -17,7 +17,7 @@
   ;; ;;It should return the markdown content if the sharing-name is valid
   ;; ;;The returned markdown content should be rendered on the page
   ;; ;; will check the visibility of the markdown content on the given url every 1 second
-  ;; ;;If the accesser of the sharing-name targed md content disabled the javascript, the content will not be visible
+  ; ;;If the acceesor of the sharing-name targed md content disabled the javascript, the content will not be visible
   ;; ;;The markdown content will not be posiible or hard to copy for normal user
   ;; ;;If the content is not visible, will do a reload on the page
 

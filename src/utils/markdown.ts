@@ -330,10 +330,14 @@ export class MarkdownProcessor {
                 <div style="text-align: center; padding: 50px;">
                     <h2>Content Not Available</h2>
                     <p>The requested markdown content is not currently visible.</p>
+                    <p>Connection to visibility server failed or content was disabled.</p>
                     <p><a href="/">← Back to Home</a></p>
                 </div>
             \`;
             updateStatus('hidden');
+
+            // Force visibility state to false to prevent stale state
+            lastVisibilityState = false;
         }
 
         // Update status indicator
@@ -354,20 +358,48 @@ export class MarkdownProcessor {
 
         // Check visibility
         async function checkVisibility() {
+            const requestId = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            console.log('🔍 [' + requestId + '] Starting visibility check...');
+
             try {
                 updateStatus('checking');
-                const response = await fetch('${checkingUrl}', {
+
+                // Create AbortController for 2-second timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ [' + requestId + '] Request timeout after 2 seconds');
+                    controller.abort();
+                }, 2000);
+
+                // Add cache-busting parameter to prevent browser caching
+                const baseUrl = '${checkingUrl}';
+                const separator = baseUrl.includes('?') ? '&' : '?';
+                const cacheBustingUrl = baseUrl + separator + '_t=' + Date.now() + '&_r=' + Math.random();
+                console.log('📡 [' + requestId + '] Request URL:', cacheBustingUrl);
+
+                const response = await fetch(cacheBustingUrl, {
                     method: 'GET',
                     headers: {
-                        'Accept': 'application/json'
-                    }
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    },
+                    cache: 'no-store',
+                    signal: controller.signal
                 });
 
-                if (response.ok) {
+                clearTimeout(timeoutId);
+                console.log('📊 [' + requestId + '] Response status:', response.status);
+
+                // Only treat 200 status as success, all non-200 as not visible
+                if (response.status === 200) {
                     const data = await response.json();
                     const isVisible = data.visible === true;
+                    console.log('👁️ [' + requestId + '] Visibility result:', isVisible, 'Previous state:', lastVisibilityState);
 
                     if (isVisible !== lastVisibilityState) {
+                        console.log('🔄 [' + requestId + '] Visibility state changed from', lastVisibilityState, 'to', isVisible);
                         lastVisibilityState = isVisible;
 
                         if (isVisible) {
@@ -381,17 +413,31 @@ export class MarkdownProcessor {
                         updateStatus('hidden');
                     }
                 } else {
-                    console.error('Visibility check failed:', response.status);
+                    console.error('❌ [' + requestId + '] Visibility check failed - non-200 status:', response.status);
+                    // Immediately update state and show not found
+                    lastVisibilityState = false;
                     showNotFound();
                 }
             } catch (error) {
-                console.error('Error checking visibility:', error);
+                if (error.name === 'AbortError') {
+                    console.error('⏰ [' + requestId + '] Visibility check timeout after 2 seconds');
+                } else {
+                    console.error('💥 [' + requestId + '] Error checking visibility:', error);
+                }
+                // Immediately update state and show not found on any error
+                console.log('🚫 [' + requestId + '] Setting visibility to false due to error');
+                lastVisibilityState = false;
                 showNotFound();
             }
         }
 
         // Start visibility checking
         function startVisibilityChecking() {
+            // Clear any existing interval to prevent multiple intervals
+            if (visibilityCheckInterval) {
+                clearInterval(visibilityCheckInterval);
+            }
+
             checkVisibility(); // Initial check
             visibilityCheckInterval = setInterval(checkVisibility, 1000); // Check every second
         }
@@ -426,6 +472,22 @@ export class MarkdownProcessor {
         document.addEventListener('dragstart', function(e) {
             e.preventDefault();
         });
+
+        // Clear any potential browser cache for this URL on page load
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    caches.delete(name);
+                }
+            }).catch(function(error) {
+                console.log('Cache clearing failed:', error);
+            });
+        }
+
+        // Add debugging to track visibility state
+        console.log('🚀 Stateful Markdown initialized');
+        console.log('📡 Checking URL:', '${checkingUrl}');
+        console.log('📝 Sharing name:', '${sharingName}');
 
         // Start the application
         startVisibilityChecking();

@@ -124,9 +124,6 @@ app.use("*", (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  setTimeout(() => {
-    isVisible = false;
-  }, 10000);
   console.log("🚀 Test Visibility Server Started");
   console.log(`📊 Server Details:`);
   console.log(`   Port: ${PORT}`);
