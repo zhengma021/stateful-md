@@ -1,8 +1,14 @@
 # Stateful Markdown
 
+<p align="center">
+  <img src="resources/stateful-md-icon.png" alt="Stateful Markdown Icon" width="128" height="128">
+</p>
+
 A TypeScript application for sharing markdown content with dynamic visibility control and copy protection.
 
 **English** | [中文](./README-zh.md)
+
+> 🤖 **AI Generated Project**: This project is 90% created by AI tools. All prompts used to create this project are available in the [prompt folder](prompt/) (written in Lisp style).
 
 ## Overview
 
@@ -317,6 +323,8 @@ curl -X POST http://localhost:3001/api/set-visibility \
 ## License
 
 MIT License - see LICENSE file for details.
+
+**Important**: While the code is free to use under the MIT License, the project icon (`resources/stateful-md-icon.png`) is NOT included under this license. The project icon is proprietary and belongs to the project author. You may not copy, use, modify, or distribute the project icon without explicit written permission from the author.
 
 ## Contributing
 

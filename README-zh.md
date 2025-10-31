@@ -1,8 +1,14 @@
 # 状态化 Markdown
 
+<p align="center">
+  <img src="resources/stateful-md-icon.png" alt="Stateful Markdown Icon" width="128" height="128">
+</p>
+
 一个用于共享具有动态可见性控制和复制保护功能的 Markdown 内容的 TypeScript 应用程序。
 
 [English](./README.md) | **中文**
+
+> 🤖 **AI 生成项目**：此项目 90% 由 AI 工具创建。用于创建此项目的所有提示词都可以在 [prompt 文件夹](prompt/) 中找到（以 Lisp 风格编写）。
 
 ## 概述
 
@@ -279,6 +285,8 @@ curl -X POST http://localhost:3001/api/set-visibility \
 ## 许可证
 
 MIT 许可证 - 详情请参见 LICENSE 文件。
+
+**重要提示**：虽然代码在 MIT 许可证下免费使用，但项目图标（`resources/stateful-md-icon.png`）不包含在此许可证中。项目图标为专有资产，属于项目作者所有。未经作者明确书面许可，您不得复制、使用、修改或分发项目图标。
 
 ## 贡献
 
